@@ -1,150 +1,193 @@
 # BurnerOS
-### A privacy-first secure workspace for Android
+### Privacy-first secure workspace for Android
 
 <p align="center">
-  <b>BurnerOS</b> is an Android-based secure workspace designed for privacy-sensitive workflows.<br/>
-  It creates an isolated, encrypted environment for notes, browsing, contacts, and temporary operational data — with fast emergency purge controls and minimal forensic footprint.
+  <b>BurnerOS</b> is an Android-based secure workspace built for privacy-sensitive workflows.<br/>
+  It provides an isolated environment for encrypted notes, private browsing, burner contacts, and fast local data purge controls.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Platform-Android%20API%2023%2B-brightgreen?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Security-AES--256-red?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Architecture-Hardware%20Backed%20Keys-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Storage-Hardware%20Backed%20Keys-blue?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Status-Research%20Prototype-orange?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Focus-Mobile%20Privacy%20%26%20Security-black?style=for-the-badge" />
 </p>
 
 ---
 
-## Why BurnerOS exists
+## Overview
 
-Modern smartphones are convenient, but they are also noisy:
-- background sync
-- cloud backups
-- shared app state
-- telemetry
-- persistent browser traces
-- accidental exposure on untrusted networks
+Modern smartphones are convenient, but they leave traces:
 
-**BurnerOS** is built as a **secure, temporary, privacy-focused workspace** inside Android for situations where you want stronger separation between your normal device life and sensitive activity.
+- synced contacts
+- browser history
+- cookies and cache
+- plaintext notes
+- app telemetry
+- accidental cloud backups
+- data leakage on public Wi-Fi
+
+**BurnerOS** is designed as a **secure mini-workspace inside Android** for situations where you want stronger privacy separation from your normal device activity.
+
+It is not a replacement operating system.  
+It is a **contained, encrypted, privacy-focused layer** built for short-lived sensitive workflows.
+
+---
+
+## Why BurnerOS matters
+
+BurnerOS is useful when you need:
+
+- temporary secure note storage
+- isolated browsing sessions
+- private contacts that never sync
+- reduced local traces after use
+- quick emergency local wipe
+- a mobile privacy research platform
 
 ### Example use cases
-- Security conferences on untrusted Wi-Fi
-- Handling temporary credentials or one-time access tokens
-- Private note-taking during travel
-- Isolated browsing sessions
-- Sensitive field operations where rapid local data purge may be required
+
+- Security conferences on public Wi-Fi
+- Handling temporary credentials or OTP backup notes
+- Privacy-sensitive travel workflows
+- Mobile security demonstrations / research
+- Field testing for secure local-only data handling
 
 ---
 
-## Core security model
+## Core Features
 
-BurnerOS is not a full operating system replacement.  
-It is a **contained secure workspace** that applies:
-
-- **App-level encrypted storage**
-- **Hardware-backed key management**
-- **Secondary authentication**
-- **Ephemeral session handling**
-- **No cloud sync by design**
-- **Rapid local purge controls**
-
-This makes it useful as a **privacy layer** for high-risk or temporary workflows on Android.
-
----
-
-## Features at a glance
-
-| Module | What it does | Security benefit |
+| Feature | Description | Security Value |
 |---|---|---|
-| **Biometric / PIN Gate** | Requires device auth + secondary app auth | Adds a second access boundary |
-| **Secure Note Vault** | Stores sensitive text in encrypted local storage | Protects credentials / notes from casual device compromise |
-| **Stealth Web** | Privacy-focused browser session with local cleanup on exit | Reduces browsing residue |
-| **Burner Contacts** | Local-only contacts stored inside the workspace | Prevents sync leakage to device/cloud contacts |
-| **Secure Maps** | Private map workflows using OpenStreetMap-based integration | Limits dependency on mainstream tracking-heavy map flows |
-| **Emergency Purge** | One-tap local wipe of Burner workspace data | Fast response for device loss / coercive situations |
-| **Duress PIN (Prototype)** | Alternate PIN path that triggers silent workspace reset | Designed for emergency privacy protection scenarios |
+| **Biometric + PIN Access** | Uses device auth plus secondary in-app PIN | Adds an extra trust boundary |
+| **Secure Note Vault** | Encrypted local note storage for sensitive text | Protects notes, passwords, tokens |
+| **Stealth Browser** | Private browsing session with cleanup on exit | Reduces local browsing residue |
+| **Burner Contacts** | Local-only contacts that do not sync to the device or cloud | Prevents contact leakage |
+| **Secure Maps** | Privacy-oriented map usage using OpenStreetMap-style integration | Avoids mainstream tracking-heavy map workflows |
+| **Emergency Purge** | One-tap local wipe of BurnerOS workspace data | Fast response for device loss or end-of-session cleanup |
+| **Emergency PIN Flow (Prototype)** | Alternate PIN can trigger a silent local workspace reset | Research concept for privacy-preserving emergency access flows |
 
 ---
 
-## Threat model
+## How BurnerOS Works
 
-BurnerOS is designed to reduce exposure against:
+BurnerOS is built around **four core layers**:
 
-- Shared-device privacy leakage
-- Casual device inspection
-- App-to-app data bleed
-- Local traces from browser history / cookies / cached sessions
-- Credential exposure in plaintext notes
-- Sensitive data persistence after short-lived workflows
-- Untrusted network usage (future hardening with enforced tunnel controls)
+### 1. Secondary Authentication Layer
+BurnerOS does not rely only on the device lock screen.
 
-### Out of scope / non-goals
-BurnerOS is **not** intended to defend against:
+It can require:
 
-- A fully compromised kernel
-- Advanced hardware implants
-- Baseband-level compromise
-- Nation-state forensic extraction on a seized unlocked device
-- Rooted devices with active runtime instrumentation
-- Memory scraping during an active unlocked session
+- **Device unlock** (fingerprint / system PIN / pattern)
+- **Secondary app PIN**
 
-This project is best viewed as a **privacy-hardening layer**, not a guarantee of invisibility.
+This means someone with casual access to your unlocked phone still should not directly access the BurnerOS workspace.
 
 ---
 
-## Architecture & trust boundaries
+### 2. Encrypted Local Storage
+Sensitive data is stored using Android’s secure storage stack:
 
-Whenever you are on hostile Wi-Fi, traveling, or handling short-lived sensitive data, BurnerOS acts as a contained workspace with explicit trust boundaries.
+- `EncryptedSharedPreferences`
+- `MasterKey`
+- Android Keystore
+- hardware-backed key storage (when supported by the device)
 
-```mermaid
-graph TD
-    classDef main fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef network fill:#e1f5fe,stroke:#0277bd,stroke-width:1px;
-    classDef component fill:#fffde7,stroke:#fbc02d,stroke-width:1px;
-    classDef physical fill:#eceff1,stroke:#546e7a,stroke-width:1px;
+This means data stored by BurnerOS is intended to remain unreadable if someone simply pulls app files from storage.
 
-    subgraph Phys [PHYSICAL DEVICE]
-        HostOS[Android Host OS]:::physical
-        Sandbox[App Sandbox / Work Profile Boundary]:::physical
-    end
+---
 
-    subgraph BOS [BURNEROS WORKSPACE]
-        direction TB
-        HardKernel[Hardware-Backed MasterKey]:::main
-        
-        subgraph Tools [SECURE MODULES]
-            direction LR
-            Browser[Stealth Web]:::component
-            Notes[Encrypted Notes]:::component
-            Maps[Secure Maps]:::component
-            Contacts[Burner Contacts]:::component
-        end
+### 3. Ephemeral Session Hygiene
+BurnerOS is designed to leave fewer traces than normal app usage.
 
-        subgraph SECURE_LAYER [PRIVACY & CONTROL LAYER]
-            direction TB
-            Storage[Encrypted Local Storage]:::network
-            Cleanup[Session Cleanup / Purge Controls]:::network
-            Tunnel[VPN / Tor (Roadmap)]:::network
-        end
-    end
+Examples:
 
-    subgraph External [UNTRUSTED NETWORKS]
-        direction LR
-        WiFi[Conference / Public Wi-Fi]:::network
-        Internet[Public Internet]:::network
-    end
+- browser cache cleanup
+- cookie cleanup
+- history cleanup
+- local-only storage model
+- no cloud sync by design
+- minimal persistent operational data
 
-    HostOS --> Sandbox
-    Sandbox --> BOS
+This makes it suitable for **temporary sensitive workflows** rather than permanent storage.
 
-    HardKernel --> Tools
-    Tools --> Storage
-    Tools --> Cleanup
-    Tools --> Tunnel
+---
 
-    Tunnel --> WiFi
-    WiFi --> Internet
+### 4. Emergency Local Purge
+BurnerOS includes a fast local wipe/reset concept.
 
-    BOS -.->|No cloud sync by default| HostOS
-    BOS -.->|Encrypted local-only data| HostOS
+This allows:
+
+- clearing sensitive notes
+- clearing burner contacts
+- resetting local app state
+- ending the session with minimal residue
+
+> **Important:** This feature is intended for privacy, personal data minimization, and safe handling of temporary sensitive data. It is not intended for evading lawful obligations or misuse.
+
+---
+
+## How to Use BurnerOS
+
+### Normal usage flow
+
+1. **Unlock your phone**
+2. **Open BurnerOS**
+3. **Authenticate**
+   - Use fingerprint / device credential if prompted
+   - Enter your secondary BurnerOS PIN
+4. **Enter the secure workspace**
+5. Use the modules:
+   - **Notes** → store temporary secrets, credentials, or private notes
+   - **Stealth Browser** → browse with session cleanup
+   - **Burner Contacts** → save local-only contacts
+   - **Maps** → use private navigation workflow
+6. When done:
+   - Exit normally for session cleanup
+   - Or use **Emergency Purge** if you want a full local reset
+
+---
+
+### Example workflow
+
+#### At a conference
+- Join untrusted Wi-Fi
+- Open BurnerOS
+- Store temporary conference credentials in **Secure Notes**
+- Use **Stealth Browser** for private access
+- Save temporary meetup contacts in **Burner Contacts**
+- End the session
+- Trigger **Emergency Purge** before leaving
+
+This reduces the chance of sensitive conference-related data lingering on your main device profile.
+
+---
+
+## UI Concept
+
+BurnerOS is designed to feel like a **contained secure console** inside Android — simple, direct, and fast.
+
+### UI goals
+
+- minimal distractions
+- high-contrast security-focused interface
+- obvious access state
+- fast panic / purge action
+- quick navigation between secure modules
+
+---
+
+### Dashboard concept
+
+```text
+    __________________________________________
+   | [🔓] BurnerOS Secure Workspace [00:01:45] |
+   |__________________________________________|
+   |                                          |
+   |   [ 🔍 Stealth Web ]   [ 📝 Notes ]       |
+   |   [ 📇 Contacts   ]   [ 🗺️ Maps  ]       |
+   |                                          |
+   |__________________________________________|
+   |        [ EMERGENCY PURGE / RESET ]       |
+   |__________________________________________|
