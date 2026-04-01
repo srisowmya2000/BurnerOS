@@ -1,0 +1,23 @@
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.gradle/
+local.properties
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Build
+build/
+app/build/
+
+# VS Code
+.vscode/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Old working files
+README_BURNER.md
+Ssl_bypass/
