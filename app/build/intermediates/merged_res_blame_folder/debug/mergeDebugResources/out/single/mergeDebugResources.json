@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "com.example.burnermode.app-debug-30:/layout_activity_burner.xml.flat",
+        "source": "com.example.burnermode.app-main-32:/layout/activity_burner.xml"
+    },
+    {
+        "merged": "/Users/srisowmyanemani/.gradle/daemon/8.7/com.example.burnermode.app-debug-30:/layout_activity_burner.xml.flat",
+        "source": "/Users/srisowmyanemani/.gradle/daemon/8.7/com.example.burnermode.app-main-32:/layout/activity_burner.xml"
+    }
+]

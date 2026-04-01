@@ -2,7 +2,7 @@
 
 [![Android API](https://img.shields.io/badge/API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=23)
 [![Security](https://img.shields.io/badge/Security-AES--256-red.svg)](#)
-
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](#)
 
 **Burner OS** is a high-security, encrypted "sub-operating system" designed to run inside Android. It provides a stealth environment for sensitive data, secure communications, and private browsing with a built-in "Self-Destruct" mechanism.
 
@@ -58,7 +58,7 @@ The Burner environment is designed to minimize your digital footprint. No backgr
 
 1.  **Clone the Repo**:
     ```bash
-    git clone https://github.com/youruser/burner-os.git
+    git clone https://github.com/srisowmya2000/BurnerOS.git
     ```
 2.  **Open in Android Studio**:
     *   Ensure you have JDK 11+ and Android SDK 33.
@@ -83,3 +83,4 @@ Want to make the Ghost Protocol even stronger?
 *   Implement a **Secret Photo Vault**.
 *   Build a **Mock UI** for the duress mode.
 
+**[MIT License](LICENSE)** | **Made for Privacy**

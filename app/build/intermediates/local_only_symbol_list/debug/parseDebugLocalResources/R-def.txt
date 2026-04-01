@@ -1,0 +1,15 @@
+R_DEF: Internal format may change without notice
+local
+id btnBrowser
+id btnContacts
+id btnMaps
+id btnNotes
+id btnPanic
+id dashboardGrid
+id rootLayout
+id switchBurner
+id topBar
+id tvStatus
+id tvTimer
+layout activity_burner
+style Theme.BurnerMode

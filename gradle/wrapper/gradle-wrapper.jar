@@ -1,0 +1,3 @@
+Placeholder for gradle-wrapper.jar
+
+This is a placeholder file. To produce a real gradle-wrapper.jar run 'gradle wrapper' from a machine with Gradle installed; that will generate a proper jar in this location. Alternatively, copy the generated jar from another project.
