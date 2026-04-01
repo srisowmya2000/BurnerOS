@@ -3,7 +3,6 @@
 [![Android API](https://img.shields.io/badge/API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=23)
 [![Security](https://img.shields.io/badge/Security-AES--256-red.svg)](#)
 
-
 **Burner OS** is a high-security, encrypted "sub-operating system" designed to run inside Android. It provides a stealth environment for sensitive data, secure communications, and private browsing with a built-in "Self-Destruct" mechanism.
 
 ---
@@ -22,21 +21,63 @@
 
 ---
 
-## 📸 Dashboard Preview
+## 🏗️ System Architecture & Trust Model
 
-```text
-    _________________________________
-   | [🔓] Secure OS   [ 00:01:45 ]  |  <-- Live Session Timer
-   |_________________________________|
-   |                                 |
-   |   [ 🔍 Stealth ]   [ 📝 Notes ]  |  <-- Encrypted App Grid
-   |   [ 📇 Contacts]   [ 🗺️ Maps  ]  |
-   |                                 |
-   |_________________________________|
-   |      [ PANIC WIPE (PURGE) ]     |  <-- Self-Destruct Button
-   |_________________________________|
-```
+Whenever you are at a conference or on untrusted WiFi, BurnerOS acts as your secure gateway. It isolates your primary identity from the hostile network.
 
+```mermaid
+graph TD
+    %% Define Styles
+    classDef main fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef network fill:#e1f5fe,stroke:#0277bd,stroke-width:1px;
+    classDef component fill:#fffde7,stroke:#fbc02d,stroke-width:1px;
+    classDef physical fill:#eceff1,stroke:#546e7a,stroke-width:1px;
+
+    subgraph Phys [PHYSICAL DEVICE]
+        HostOS[Android Host OS]:::physical
+        Sandbox[Android Work Profile / Sandbox]:::physical
+    end
+
+    subgraph BOS [BurnerOS ENVIRONMENT]
+        direction TB
+        HardKernel[Hardware Backed MasterKey]:::main
+        
+        subgraph Tools [SECURE MODULES]
+            direction LR
+            Browser[Stealth Web]:::component
+            Notes[Encrypted Notes]:::component
+            Maps[Offline Maps]:::component
+        end
+
+        subgraph SECURE_LAYER [SECURITY & PRIVACY LAYER]
+            direction TB
+            VPN[Enforced VPN/Tor Tunnel]:::network
+            FW[Egress Firewall]:::network
+        end
+    end
+
+    subgraph External [HOSTILE NETWORKS]
+        direction LR
+        UntrustedNet[Untrusted Conf Wifi]:::network
+        Internet[Public Internet]:::network
+    end
+
+    %% Connections
+    HostOS --> Sandbox
+    Sandbox --> BOS
+
+    %% BurnerOS Internal Flow
+    HardKernel --> Tools
+    Tools --> FW
+    FW --> VPN
+    
+    %% Egress
+    VPN --> UntrustedNet
+    UntrustedNet --> Internet
+
+    %% Data Isolation boundary
+    BOS -.->|No Cloud Sync| HostOS
+    BOS -.->|AES-256 Isolation| HostOS
 ---
 
 ## 🚀 How It Works
