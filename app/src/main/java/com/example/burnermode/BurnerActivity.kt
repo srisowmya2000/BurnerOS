@@ -1,5 +1,6 @@
 package com.example.burnermode
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -59,6 +60,7 @@ class BurnerActivity : AppCompatActivity() {
         setContentView(R.layout.activity_burner)
 
         prefs = EncryptedPrefsManager(this)
+        
         root = findViewById(R.id.rootLayout)
         toggle = findViewById(R.id.switchBurner)
         statusTv = findViewById(R.id.tvStatus)
@@ -204,7 +206,6 @@ class BurnerActivity : AppCompatActivity() {
             }
         }
         
-        // Secure WebView Configuration
         webView.settings.apply {
             javaScriptEnabled = true
             domStorageEnabled = true
@@ -215,7 +216,7 @@ class BurnerActivity : AppCompatActivity() {
             displayZoomControls = false
         }
         
-        urlBar.setOnEditorActionListener { v, actionId, event ->
+        urlBar.setOnEditorActionListener { _, _, _ ->
             val query = urlBar.text.toString()
             if (query.startsWith("http")) {
                 webView.loadUrl(query)
@@ -259,7 +260,7 @@ class BurnerActivity : AppCompatActivity() {
         toggle.isChecked = false
     }
 
-    private fun performPanicWipe() {
+    private fun performPanicWipe(isDuress: Boolean = false) {
         handler.removeCallbacks(tick)
         prefs.clearAll()
         running = false
@@ -267,11 +268,19 @@ class BurnerActivity : AppCompatActivity() {
         timerTv.text = "00:00:00"
         toggle.isChecked = false
 
-        root.animate().alpha(0f).setDuration(300).withEndAction {
-            applyBurnerUI(false)
-            root.alpha = 1f
-            Snackbar.make(root, "SYSTEM PURGED: ALL DATA DELETED", Snackbar.LENGTH_LONG).show()
-        }.start()
+        if (isDuress) {
+            // Launch the Decoy Calculator
+            val intent = Intent(this, CalculatorActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        } else {
+            root.animate().alpha(0f).setDuration(300).withEndAction {
+                applyBurnerUI(false)
+                root.alpha = 1f
+                Snackbar.make(root, "SYSTEM PURGED: ALL DATA DELETED", Snackbar.LENGTH_LONG).show()
+            }.start()
+        }
     }
 
     private fun showPinEntryDialog() {
@@ -286,7 +295,7 @@ class BurnerActivity : AppCompatActivity() {
             .setPositiveButton("GO") { _, _ ->
                 val entered = input.text.toString()
                 when {
-                    entered == prefs.getDuressPin() -> performPanicWipe()
+                    entered == prefs.getDuressPin() -> performPanicWipe(true)
                     entered == prefs.getPin() -> {
                         performEnable()
                         toggle.isChecked = true

@@ -9,6 +9,7 @@
         android:label="Burner Mode"
         android:supportsRtl="true"
         android:theme="@style/Theme.BurnerMode">
+
         <activity
             android:name="com.example.burnermode.BurnerActivity"
             android:exported="true"
@@ -18,6 +19,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.example.burnermode.CalculatorActivity"
+            android:exported="false"
+            android:label="Calculator"
+            android:theme="@style/Theme.MaterialComponents.NoActionBar" />
+
     </application>
 
 </manifest>
