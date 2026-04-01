@@ -23,7 +23,7 @@
 
 ## 🏗️ System Architecture & Trust Model
 
-Whenever you are at a conference or on untrusted WiFi, BurnerOS acts as your secure gateway. It isolates your primary identity from the hostile network.
+Whenever you are at a conference or on untrusted WiFi, BurnerOS acts as your secure gateway. It isolates your primary identity from hostile network listeners.
 
 ```mermaid
 graph TD
@@ -58,7 +58,7 @@ graph TD
 
     subgraph External [HOSTILE NETWORKS]
         direction LR
-        UntrustedNet[Untrusted Conf Wifi]:::network
+        UntrustedNet[Untrusted Conf WiFi]:::network
         Internet[Public Internet]:::network
     end
 
@@ -78,7 +78,6 @@ graph TD
     %% Data Isolation boundary
     BOS -.->|No Cloud Sync| HostOS
     BOS -.->|AES-256 Isolation| HostOS
----
 
 ## 🚀 How It Works
 
