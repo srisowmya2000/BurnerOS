@@ -1,5 +1,5 @@
 # BurnerOS
-### Privacy-first secure workspace for Android
+
 
 <p align="center">
   <b>BurnerOS</b> is an Android-based secure workspace built for privacy-sensitive workflows.<br/>
