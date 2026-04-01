@@ -4,8 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
+import java.io.File
 
-class EncryptedPrefsManager(context: Context) {
+class EncryptedPrefsManager(private val context: Context) {
     private val prefs: SharedPreferences
 
     init {
@@ -41,14 +42,21 @@ class EncryptedPrefsManager(context: Context) {
 
     fun getSecureNote(): String = prefs.getString(KEY_SECURE_NOTE, "") ?: ""
 
-    // Secure Contacts (Stored as a single string for simplicity)
+    // Secure Contacts
     fun saveContacts(contacts: String) {
         prefs.edit().putString(KEY_CONTACTS, contacts).apply()
     }
 
     fun getContacts(): String = prefs.getString(KEY_CONTACTS, "") ?: ""
 
-    // PIN helpers - Now with auto-recovery
+    // Photo Vault Directory
+    fun getPhotoDir(): File {
+        val dir = File(context.filesDir, "secure_vault")
+        if (!dir.exists()) dir.mkdirs()
+        return dir
+    }
+
+    // PIN helpers
     fun putPin(pin: String) {
         prefs.edit().putString(KEY_PIN, pin).apply()
     }
@@ -77,6 +85,9 @@ class EncryptedPrefsManager(context: Context) {
 
     fun clearAll() {
         prefs.edit().clear().apply()
+        // Wipe the photo vault directory
+        getPhotoDir().deleteRecursively()
+        // Re-seed pins
         putPin("1234")
         putDuressPin("9999")
     }

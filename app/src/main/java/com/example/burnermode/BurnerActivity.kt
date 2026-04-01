@@ -1,11 +1,15 @@
 package com.example.burnermode
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
@@ -15,9 +19,11 @@ import android.webkit.WebViewClient
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AlertDialog
 import androidx.biometric.BiometricManager
@@ -25,6 +31,10 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.switchmaterial.SwitchMaterial
+import info.guardianproject.netcipher.proxy.OrbotHelper
+import info.guardianproject.netcipher.webkit.WebkitProxy
+import java.io.File
+import java.io.FileOutputStream
 import java.util.concurrent.Executor
 
 class BurnerActivity : AppCompatActivity() {
@@ -38,7 +48,7 @@ class BurnerActivity : AppCompatActivity() {
     private lateinit var btnBrowser: LinearLayout
     private lateinit var btnNotes: LinearLayout
     private lateinit var btnContacts: LinearLayout
-    private lateinit var btnMaps: LinearLayout
+    private lateinit var btnPhotos: LinearLayout
 
     private val handler = Handler(Looper.getMainLooper())
     private var startTime: Long = 0L
@@ -52,6 +62,13 @@ class BurnerActivity : AppCompatActivity() {
             val elapsed = if (running) System.currentTimeMillis() - startTime else 0L
             timerTv.text = formatElapsed(elapsed)
             handler.postDelayed(this, 1000)
+        }
+    }
+
+    private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageBitmap = result.data?.extras?.get("data") as? Bitmap
+            imageBitmap?.let { savePhotoToVault(it) }
         }
     }
 
@@ -69,7 +86,7 @@ class BurnerActivity : AppCompatActivity() {
         btnBrowser = findViewById(R.id.btnBrowser)
         btnNotes = findViewById(R.id.btnNotes)
         btnContacts = findViewById(R.id.btnContacts)
-        btnMaps = findViewById(R.id.btnMaps)
+        btnPhotos = findViewById(R.id.btnPhotos)
         panicBtn = findViewById(R.id.btnPanic)
 
         val active = prefs.isBurnerActive()
@@ -87,9 +104,11 @@ class BurnerActivity : AppCompatActivity() {
         setupBiometric()
 
         btnNotes.setOnClickListener { showNotesDialog() }
-        btnBrowser.setOnClickListener { showBrowserDialog("https://duckduckgo.com", "Secure Web Search") }
+        btnBrowser.setOnClickListener { 
+            checkTorAndShowBrowser("https://duckduckgo.com", "Stealth Browser (Tor Enabled)") 
+        }
         btnContacts.setOnClickListener { showContactsDialog() }
-        btnMaps.setOnClickListener { showBrowserDialog("https://www.openstreetmap.org", "Secure OSM Maps") }
+        btnPhotos.setOnClickListener { showPhotoVaultDialog() }
         
         panicBtn.setOnClickListener {
             AlertDialog.Builder(this)
@@ -189,7 +208,67 @@ class BurnerActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun showBrowserDialog(initialUrl: String, title: String) {
+    private fun showPhotoVaultDialog() {
+        val photoDir = prefs.getPhotoDir()
+        val photos = photoDir.listFiles() ?: arrayOf()
+
+        val container = LinearLayout(this)
+        container.orientation = LinearLayout.VERTICAL
+        container.setPadding(16, 16, 16, 16)
+
+        val btnCapture = Button(this)
+        btnCapture.text = "Capture Secret Photo"
+        btnCapture.setOnClickListener {
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            takePhotoLauncher.launch(intent)
+        }
+        container.addView(btnCapture)
+
+        val grid = GridLayout(this)
+        grid.columnCount = 3
+        photos.forEach { file ->
+            val iv = ImageView(this)
+            val lp = GridLayout.LayoutParams()
+            lp.width = 250
+            lp.height = 250
+            lp.setMargins(8, 8, 8, 8)
+            iv.layoutParams = lp
+            iv.scaleType = ImageView.ScaleType.CENTER_CROP
+            val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+            iv.setImageBitmap(bitmap)
+            grid.addView(iv)
+        }
+        container.addView(grid)
+
+        AlertDialog.Builder(this)
+            .setTitle("Secret Photo Vault")
+            .setView(container)
+            .setPositiveButton("Close", null)
+            .show()
+    }
+
+    private fun savePhotoToVault(bitmap: Bitmap) {
+        val file = File(prefs.getPhotoDir(), "IMG_${System.currentTimeMillis()}.jpg")
+        FileOutputStream(file).use { out ->
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+        }
+        Toast.makeText(this, "Photo Locked in Vault", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun checkTorAndShowBrowser(initialUrl: String, title: String) {
+        if (!OrbotHelper.get(this).isOrbotInstalled) {
+            AlertDialog.Builder(this)
+                .setTitle("Tor Connectivity")
+                .setMessage("For maximum stealth, Burner OS uses Tor. Please install Orbot to enable untraceable browsing.\n\nContinue without Tor?")
+                .setPositiveButton("Continue (Unsecured)") { _, _ -> showBrowserDialog(initialUrl, title, false) }
+                .setNegativeButton("Install Orbot") { _, _ -> OrbotHelper.get(this).promptInstallOrbot(this) }
+                .show()
+        } else {
+            showBrowserDialog(initialUrl, title, true)
+        }
+    }
+
+    private fun showBrowserDialog(initialUrl: String, title: String, useTor: Boolean) {
         val container = LinearLayout(this)
         container.orientation = LinearLayout.VERTICAL
         container.setPadding(16, 16, 16, 16)
@@ -214,6 +293,15 @@ class BurnerActivity : AppCompatActivity() {
             setSupportZoom(true)
             builtInZoomControls = true
             displayZoomControls = false
+        }
+
+        if (useTor) {
+            try {
+                WebkitProxy.setProxy("com.example.burnermode", applicationContext, webView, "127.0.0.1", 8118)
+                Toast.makeText(this, "Tor Proxy Active", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this, "Tor Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
         
         urlBar.setOnEditorActionListener { _, _, _ ->
@@ -269,7 +357,6 @@ class BurnerActivity : AppCompatActivity() {
         toggle.isChecked = false
 
         if (isDuress) {
-            // Launch the Decoy Calculator
             val intent = Intent(this, CalculatorActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)

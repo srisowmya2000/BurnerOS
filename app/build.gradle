@@ -32,4 +32,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.1.4"
     implementation "androidx.security:security-crypto:1.1.0-alpha06"
     implementation "androidx.biometric:biometric:1.1.0"
+    
+    // NetCipher for Tor Proxy support
+    implementation "info.guardianproject.netcipher:netcipher:2.1.0"
+    implementation "info.guardianproject.netcipher:netcipher-webkit:2.1.0"
 }

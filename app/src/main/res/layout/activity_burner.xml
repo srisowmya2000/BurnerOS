@@ -126,7 +126,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/btnMaps"
+            android:id="@+id/btnPhotos"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
@@ -139,12 +139,12 @@
             <ImageView
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:src="@android:drawable/ic_menu_mapmode"
+                android:src="@android:drawable/ic_menu_camera"
                 app:tint="#FFFFFF" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Map Snapshots"
+                android:text="Photo Vault"
                 android:textColor="#FFFFFF" />
         </LinearLayout>
 
