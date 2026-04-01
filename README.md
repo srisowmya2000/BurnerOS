@@ -1,3 +1,4 @@
+```markdown
 # 🔥 Burner OS: The Digital Ghost Protocol
 
 [![Android API](https://img.shields.io/badge/API-23%2B-brightgreen.svg)](https://android-arsenal.com/api?level=23)
@@ -78,13 +79,33 @@ graph TD
     %% Data Isolation boundary
     BOS -.->|No Cloud Sync| HostOS
     BOS -.->|AES-256 Isolation| HostOS
+```
+
+---
+
+## 📸 Dashboard Preview
+
+```text
+    _________________________________
+   | [🔓] Secure OS   [ 00:01:45 ]  |  <-- Live Session Timer
+   |_________________________________|
+   |                                 |
+   |   [ 🔍 Stealth ]   [ 📝 Notes ]  |  <-- Encrypted App Grid
+   |   [ 📇 Contacts]   [ 🗺️ Maps  ]  |
+   |                                 |
+   |_________________________________|
+   |      [ PANIC WIPE (PURGE) ]     |  <-- Self-Destruct Button
+   |_________________________________|
+```
+
+---
 
 ## 🚀 How It Works
 
 ### 1. Dual-Layer Entry
 The app requires your device lock (Fingerprint/PIN) AND a secondary App PIN. 
-*   **Normal PIN (`1234`)**: Grants access to the red Burner environment.
-*   **Duress PIN (`9999`)**: Instantly wipes the vault and stays on the white "System Inactive" screen.
+* **Normal PIN (`1234`)**: Grants access to the red Burner environment.
+* **Duress PIN (`9999`)**: Instantly wipes the vault and stays on the white "System Inactive" screen.
 
 ### 2. Encrypted Filesystem
 All data is stored using `EncryptedSharedPreferences` with a hardware-backed `MasterKey`. Even if your phone is rooted, your Burner data remains a scrambled mess without the keys.
@@ -96,19 +117,19 @@ The Burner environment is designed to minimize your digital footprint. No backgr
 
 ## 🛠 Installation & Setup
 
-1.  **Clone the Repo**:
+1. **Clone the Repo**:
     ```bash
-    git clone https://github.com/srisowmya2000/BurnerOS.git
+    git clone [https://github.com/srisowmya2000/BurnerOS.git](https://github.com/srisowmya2000/BurnerOS.git)
     ```
-2.  **Open in Android Studio**:
-    *   Ensure you have JDK 11+ and Android SDK 33.
-3.  **Build**:
+2. **Open in Android Studio**:
+    * Ensure you have JDK 11+ and Android SDK 33.
+3. **Build**:
     ```bash
     ./gradlew assembleDebug
     ```
-4.  **Device Setup**:
-    *   Go to **Settings > Security** on your phone and set a PIN/Pattern.
-    *   Open the app and use default PIN `1234`.
+4. **Device Setup**:
+    * Go to **Settings > Security** on your phone and set a PIN/Pattern.
+    * Open the app and use default PIN `1234`.
 
 ---
 
@@ -119,8 +140,7 @@ The Burner environment is designed to minimize your digital footprint. No backgr
 
 ## 🤝 Contributing
 Want to make the Ghost Protocol even stronger? 
-*   Add **Tor Proxy** support.
-*   Implement a **Secret Photo Vault**.
-*   Build a **Mock UI** for the duress mode.
-
-
+* Add **Tor Proxy** support.
+* Implement a **Secret Photo Vault**.
+* Build a **Mock UI** for the duress mode.
+```
