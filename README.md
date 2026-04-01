@@ -179,6 +179,8 @@ BurnerOS is designed to feel like a **contained secure console** inside Android 
 ---
 
 ### Dashboard concept
+<img width="449" height="448" alt="image" src="https://github.com/user-attachments/assets/a4bdd979-f956-40c0-a566-e089bfb0b859" />
+
 
 ```text
     __________________________________________
